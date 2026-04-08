@@ -50,12 +50,14 @@ public class InMemoryItemRepository implements ItemRepository {
     public Collection<Item> searchItem(String text) {
         log.info("Поиск вещей по тексту: '{}'", text);
 
+        String lowerText = text.toLowerCase();
+
         return items.values().stream()
                 .filter(Item::getAvailable)
                 .filter(item ->
-                        (item.getName() != null && item.getName().toLowerCase().contains(text.toLowerCase())) ||
+                        (item.getName() != null && item.getName().toLowerCase().contains(lowerText)) ||
                                 (item.getDescription() != null &&
-                                        item.getDescription().toLowerCase().contains(text.toLowerCase()))
+                                        item.getDescription().toLowerCase().contains(lowerText))
                 )
                 .collect(Collectors.toList());
     }
