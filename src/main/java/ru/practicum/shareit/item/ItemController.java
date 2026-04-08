@@ -1,12 +1,51 @@
 package ru.practicum.shareit.item;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.ItemDto;
 
-/**
- * TODO Sprint add-controllers.
- */
+import java.util.Collection;
+
+@Slf4j
 @RestController
 @RequestMapping("/items")
+@RequiredArgsConstructor
 public class ItemController {
+    private final ItemService itemService;
+
+    @GetMapping
+    public Collection<ItemDto> getAllItemsByOwner(@RequestHeader("X-Sharer-User-Id") Long ownerId) {
+        log.info("Запрос на получение всех вещей владельца с ID: {}", ownerId);
+        return itemService.getAllItemsByOwner(ownerId);
+    }
+
+    @GetMapping("/{itemId}")
+    public ItemDto getItemById(@PathVariable("itemId") Long id) {
+        log.info("Запрос на получение вещи по ID {}", id);
+        return itemService.getItemById(id);
+    }
+
+    @GetMapping("/search")
+    public Collection<ItemDto> searchItems(@RequestParam String text) {
+        log.info("Поиск вещей по тексту: '{}'", text);
+        return itemService.searchItem(text);
+    }
+
+    @PostMapping
+    public ItemDto createItem(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+                              @Valid @RequestBody ItemDto item) {
+        log.info("Запрос на создание вещи для владельца ID: {}", ownerId);
+        return itemService.createItem(ownerId, item);
+    }
+
+    @PatchMapping("/{itemId}")
+    public ItemDto updateItem(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+                              @PathVariable("itemId") Long id,
+                              @RequestBody ItemDto item) {
+
+        log.info("Запрос на обновление вещи {} владельцем ID: {}", id, ownerId);
+        return itemService.updateItem(id, ownerId, item);
+    }
 }
