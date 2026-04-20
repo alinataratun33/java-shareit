@@ -52,9 +52,9 @@ public class ItemServiceImpl implements ItemService {
 
         Collection<Item> items = itemRepository.findByOwnerIdOrderByIdAsc(ownerId);
 
-        List<Long> itemIds = items.stream().
-                map(Item::getId).
-                collect(Collectors.toList());
+        List<Long> itemIds = items.stream()
+                .map(Item::getId)
+                .collect(Collectors.toList());
 
         LocalDateTime now = LocalDateTime.now();
 
