@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,11 +15,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     private User getUserOrThrow(Long id) {
-        return userRepository.getById(id)
+        return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Пользователь не найден с ID: " + id));
     }
 
@@ -26,7 +28,7 @@ public class UserServiceImpl implements UserService {
     public Collection<UserDto> getAllUser() {
         log.info("Получение всех пользователей");
 
-        return userRepository.getAllUser()
+        return userRepository.findAll()
                 .stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
@@ -42,19 +44,21 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto createUser(UserDto userDto) {
         log.info("Создание нового пользователя с email: {}", userDto.getEmail());
 
         checkEmailUniqueness(userDto.getEmail());
 
         User user = UserMapper.toUser(userDto);
-        User savedUser = userRepository.createUser(user);
+        User savedUser = userRepository.save(user);
 
         log.info("Пользователь успешно создан с ID: {}", savedUser.getId());
         return UserMapper.toUserDto(savedUser);
     }
 
     @Override
+    @Transactional
     public UserDto updateUser(Long id, UserDto userDto) {
         log.info("Обновление пользователя с ID: {}", id);
 
@@ -71,17 +75,18 @@ public class UserServiceImpl implements UserService {
             existingUser.setEmail(userDto.getEmail());
         }
 
-        userRepository.updateUser(existingUser);
+        userRepository.save(existingUser);
         log.info("Пользователь с ID {} успешно обновлён", id);
 
         return UserMapper.toUserDto(existingUser);
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long id) {
         log.info("Удаление пользователя с ID: {}", id);
 
-        userRepository.deleteUser(id);
+        userRepository.deleteById(id);
 
         log.info("Пользователь с ID {} удалён", id);
     }
