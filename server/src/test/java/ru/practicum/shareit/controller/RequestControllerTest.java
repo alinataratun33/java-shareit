@@ -48,8 +48,7 @@ public class RequestControllerTest {
 
     @Test
     void testCreateRequest() throws Exception {
-        when(requestService.createRequest(eq(1L), any(ItemRequestDto.class))).
-                thenReturn(requestDto);
+        when(requestService.createRequest(eq(1L), any(ItemRequestDto.class))).thenReturn(requestDto);
 
         mockMvc.perform(post("/requests")
                         .header("X-Sharer-User-Id", 1L)
