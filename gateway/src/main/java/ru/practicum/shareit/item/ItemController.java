@@ -9,6 +9,8 @@ import ru.practicum.shareit.item.client.ItemClient;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 
+import java.util.Collections;
+
 
 @Slf4j
 @RestController
@@ -30,8 +32,11 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Object> searchItems(@RequestParam String text) {
+    public ResponseEntity<Object> searchItems(@RequestParam(required = false) String text) {
         log.info("Поиск вещей по тексту: '{}'", text);
+        if (text == null || text.isBlank()) {
+            return ResponseEntity.ok(Collections.emptyList());
+        }
         return itemClient.searchItem(text);
     }
 

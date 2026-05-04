@@ -50,17 +50,6 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto createBooking(Long bookerId, BookingDto bookingDto) {
         log.info("Создание бронирования: bookerId={}, itemId={}", bookerId, bookingDto.getItemId());
 
-        LocalDateTime start = bookingDto.getStart();
-        LocalDateTime end = bookingDto.getEnd();
-
-        if (end.isBefore(start) || end.equals(start)) {
-            throw new ValidationException("Дата окончания должна быть после даты начала");
-        }
-
-        if (start.isBefore(LocalDateTime.now())) {
-            throw new ValidationException("Дата начала не может быть в прошлом");
-        }
-
         User booker = getUserOrThrow(bookerId);
         Item item = getItemOrThrow(bookingDto.getItemId());
 

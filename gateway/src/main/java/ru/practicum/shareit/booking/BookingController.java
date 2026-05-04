@@ -7,6 +7,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.client.BookingClient;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.exception.ValidationException;
+
+import java.time.LocalDateTime;
 
 
 @Slf4j
@@ -23,6 +26,11 @@ public class BookingController {
 
         log.info("Запрос на создание бронирования пользователем: bookerId={}, itemId={}",
                 bookerId, bookingDto.getItemId());
+
+        if (bookingDto.getStart().isBefore(LocalDateTime.now()))
+            throw new ValidationException("Дата начала не может быть в прошлом");
+        if (!bookingDto.getEnd().isAfter(bookingDto.getStart()))
+            throw new ValidationException("Дата окончания должна быть после даты начала");
         return bookingClient.createBooking(bookerId, bookingDto);
     }
 

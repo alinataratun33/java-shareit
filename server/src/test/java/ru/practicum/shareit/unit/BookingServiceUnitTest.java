@@ -81,28 +81,6 @@ public class BookingServiceUnitTest {
     }
 
     @Test
-    void createBookingWithEndBeforeStart() {
-        bookingDto.setStart(now.plusDays(3));
-        bookingDto.setEnd(now.plusDays(1));
-
-        ValidationException exception = assertThrows(ValidationException.class, () -> {
-            bookingService.createBooking(2L, bookingDto);
-        });
-        assertEquals("Дата окончания должна быть после даты начала", exception.getMessage());
-    }
-
-    @Test
-    void createBookingWithStartInPast() {
-        bookingDto.setStart(now.minusDays(1));
-        bookingDto.setEnd(now.plusDays(3));
-
-        ValidationException exception = assertThrows(ValidationException.class, () -> {
-            bookingService.createBooking(2L, bookingDto);
-        });
-        assertEquals("Дата начала не может быть в прошлом", exception.getMessage());
-    }
-
-    @Test
     void createBookingWithItemNotAvailable() {
         item.setAvailable(false);
 

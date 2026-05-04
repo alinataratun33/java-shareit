@@ -153,9 +153,6 @@ public class ItemServiceImpl implements ItemService {
     public Collection<ItemDto> searchItem(String text) {
         log.info("Поиск вещей по тексту: '{}'", text);
 
-        if (text == null || text.isBlank()) {
-            return Collections.emptyList();
-        }
         return itemRepository.searchByText(text).stream()
                 .map(ItemMapper::toItemDto)
                 .collect(Collectors.toList());
